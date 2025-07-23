@@ -14,4 +14,5 @@ class AppStrings {
   static String signUpButtonText = 'إنشاء حساب';
   static String alreadyHaveAccount = 'لديك حساب بالفعل؟';
   static String loginInstead = 'تسجيل الدخول';
+  static String StartNow = 'ابدا الان';
 }

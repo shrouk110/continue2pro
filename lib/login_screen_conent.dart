@@ -1,91 +1,116 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_10/CustomText.dart';
 import 'package:flutter_application_10/app_colors.dart';
 import 'package:flutter_application_10/app_string.dart';
+import 'package:flutter_application_10/textfield.dart';
 
-class LoginScreenContent extends StatelessWidget {
+class LoginScreenContent extends StatefulWidget {
   final VoidCallback onSwitchToSignUp;
+  final VoidCallback onLoginPressed;
 
-  const LoginScreenContent({super.key, required this.onSwitchToSignUp});
+  const LoginScreenContent({
+    super.key,
+    required this.onSwitchToSignUp,
+    required this.onLoginPressed,
+  });
+
+  @override
+  State<LoginScreenContent> createState() => _LoginScreenContentState();
+}
+
+class _LoginScreenContentState extends State<LoginScreenContent> {
+  final _formKey = GlobalKey<FormState>();
+
+  final phoneController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          AppStrings.loginScreenWelcomeText,
-          style: TextStyle(
-            color: AppColors.whiteApp,
+    return Form(
+      key: _formKey,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CustomTextWidget(
+            text: AppStrings.loginScreenWelcomeText,
+            color: AppColors.mainColor,
             fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
-        ),
-        const SizedBox(height: 50),
+          const SizedBox(height: 50),
 
-        TextField(
-          decoration: InputDecoration(
-            fillColor: AppColors.whiteApp,
-            filled: true,
-            labelText: AppStrings.loginScreenPhonenumberTextFiled,
-            border: const OutlineInputBorder(),
+          CustomTextField(
+            label: AppStrings.loginScreenPhonenumberTextFiled,
+            controller: phoneController,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Phone number is required';
+              }
+              return null;
+            },
           ),
-        ),
-        const SizedBox(height: 20),
+          const SizedBox(height: 20),
 
-        TextField(
-          obscureText: true,
-          decoration: InputDecoration(
-            fillColor: AppColors.whiteApp,
-            filled: true,
-            labelText: AppStrings.loginScreenPasswordTextFiled,
-            border: const OutlineInputBorder(),
+          CustomTextField(
+            label: AppStrings.loginScreenPasswordTextFiled,
+            controller: passwordController,
+            isPassword: true,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Password is required';
+              } else if (value.length < 6) {
+                return 'Password must be at least 6 characters';
+              }
+              return null;
+            },
           ),
-        ),
-        const SizedBox(height: 25),
+          const SizedBox(height: 25),
 
-        ElevatedButton(
-          onPressed: () {},
-          child: Text(
-            AppStrings.loginButtonText,
-            style: const TextStyle(
+          ElevatedButton(
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                widget
+                    .onLoginPressed(); // انتقل للصفحة التالية فقط لو البيانات صحيحة
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.mainColor,
+              minimumSize: const Size(double.infinity, 50),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: CustomTextWidget(
+              text: AppStrings.loginButtonText,
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color.fromARGB(255, 8, 1, 1),
+              color: AppColors.whiteBloc,
             ),
           ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.whiteApp,
-            minimumSize: const Size(double.infinity, 50),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        ),
+          const SizedBox(height: 15),
 
-        const SizedBox(height: 15),
-
-        GestureDetector(
-          onTap: onSwitchToSignUp,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                AppStrings.noAccountText,
-                style: TextStyle(color: AppColors.whiteBloc, fontSize: 16),
-              ),
-              const SizedBox(width: 5),
-              Text(
-                AppStrings.createAccountText,
-                style: TextStyle(
-                  color: AppColors.whiteApp,
+          GestureDetector(
+            onTap: widget.onSwitchToSignUp,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CustomTextWidget(
+                  text: AppStrings.noAccountText,
+                  color: AppColors.whiteBloc,
+                  fontSize: 16,
+                ),
+                const SizedBox(width: 5),
+                CustomTextWidget(
+                  text: AppStrings.createAccountText,
+                  color: AppColors.secnderyColor,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
